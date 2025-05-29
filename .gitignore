@@ -3,10 +3,10 @@ __pycache__/
 build/
 dist/
 
-inputs/
+# inputs/
 
-outputs/
+# outputs/
 
-notebooks/
+# notebooks/
 
 cert_TrustCA_pa.crt

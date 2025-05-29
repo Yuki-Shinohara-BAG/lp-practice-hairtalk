@@ -1,0 +1,24 @@
+# version行を削除（obsoleteの警告を解消）
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile  # docker/Dockerfile から Dockerfile に変更
+      args:
+        CUDA_TAG: "12.4.1-cudnn-runtime-ubuntu22.04"
+
+    # --- GPU を すべて 貸し出す ---
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all          # 1 台だけに固定するなら 1
+              capabilities: ["gpu"]
+
+    volumes:
+      - ./:/work
+    tty: true
+    stdin_open: true
+    # コンテナを永続化（開発用）
+    command: tail -f /dev/null

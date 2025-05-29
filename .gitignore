@@ -1,0 +1,12 @@
+*.egg-info/
+__pycache__/
+build/
+dist/
+
+inputs/
+
+outputs/
+
+notebooks/
+
+cert_TrustCA_pa.crt

@@ -1,0 +1,25 @@
+# pyproject.toml
+[project]
+name = "docker-uv-template"
+version = "0.1.0"
+requires-python = ">=3.10,<3.12"
+description = "GPU-enabled Python project managed by uv"
+authors = [{ name = "Yuki Shinohara", email = "yuki.shinohara@konicaminolta.com" }]
+
+dependencies = [
+  "catboost>=1.2.8",
+  "ipykernel>=6.29.5",
+  "numpy>=1.26",
+  "pandas>=2.2",
+  "scikit-learn>=1.6.1",
+  "tensorflow>=2.19.0",
+  "torch>=2.7.0",
+  "xgboost>=3.0.2",
+]
+
+[build-system]
+requires = ["uv", "setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.uv.pip]
+extra-index-url = ["https://download.pytorch.org/whl/cu124"]

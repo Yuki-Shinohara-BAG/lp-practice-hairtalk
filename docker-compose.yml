@@ -6,6 +6,13 @@ services:
       dockerfile: Dockerfile  # docker/Dockerfile から Dockerfile に変更
       args:
         CUDA_TAG: "12.4.1-cudnn-runtime-ubuntu22.04"
+        # プロキシ設定を.envから読み込む
+        http_proxy: ${http_proxy}
+        https_proxy: ${https_proxy}
+        HTTP_PROXY: ${HTTP_PROXY}
+        HTTPS_PROXY: ${HTTPS_PROXY}
+        NO_PROXY: ${NO_PROXY}
+        no_proxy: ${no_proxy}
 
     # --- GPU を すべて 貸し出す ---
     deploy:

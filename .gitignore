@@ -10,3 +10,5 @@ notebooks/
 catboost_info/
 
 cert_TrustCA_pa.crt
+
+.env

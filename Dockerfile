@@ -2,10 +2,20 @@
 ARG CUDA_TAG=12.4.1-cudnn-runtime-ubuntu22.04
 FROM nvidia/cuda:${CUDA_TAG}
 
-ENV http_proxy http://g3.konicaminolta.jp:8080
-ENV https_proxy http://g3.konicaminolta.jp:8080
-ENV HTTP_PROXY http://g3.konicaminolta.jp:8080
-ENV HTTPS_PROXY http://g3.konicaminolta.jp:8080
+# プロキシ設定を.envファイルから読み込む
+ARG http_proxy
+ARG https_proxy
+ARG HTTP_PROXY
+ARG HTTPS_PROXY
+ARG NO_PROXY
+ARG no_proxy
+
+ENV http_proxy=${http_proxy}
+ENV https_proxy=${https_proxy}
+ENV HTTP_PROXY=${HTTP_PROXY}
+ENV HTTPS_PROXY=${HTTPS_PROXY}
+ENV NO_PROXY=${NO_PROXY}
+ENV no_proxy=${no_proxy}
 
 # ====================== 2. 環境変数 & 基本ツール =================
 ENV DEBIAN_FRONTEND=noninteractive \

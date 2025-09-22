@@ -1,5 +1,5 @@
 // グローバル変数
-const GAS_ENDPOINT = 'https://script.google.com/macros/s/AKfycbz3p9wwnl_fNbGCLCBth7kp-C3a5OO4WVk9AsaBzIN5Gx9QGCp9f-9tqZQ_wHEhsg5ESw/exec'; // Google Apps Script Webアプリの公開URL
+const GAS_ENDPOINT = 'https://script.google.com/macros/s/AKfycbw3E2b3B3TVppfz0GfFhcLCE_uys3azuPy6DU1ubwwcvSLM2hyG0CLtMIt5XpWT9R2aRw/exec'; // Google Apps Script Webアプリの公開URL
 
 // DOM要素の取得
 document.addEventListener('DOMContentLoaded', function() {

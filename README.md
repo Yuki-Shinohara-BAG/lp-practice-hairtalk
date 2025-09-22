@@ -1,178 +1,125 @@
-# Docker UV Template for GPU-accelerated Python Projects
+# HairTalk Translator Landing Page (Learning Project)
 
-NVIDIA GPU対応のPython開発環境を、[uv](https://github.com/astral-sh/uv)パッケージマネージャを使って素早く構築するためのDockerテンプレートです。機械学習や深層学習のプロジェクトに最適化されています。
+このリポジトリは、**Webマーケティング学習プロジェクト**の一環として作成された、
+美容院向け通訳サービス「HairTalk Translator」の擬似ランディングページ (LP) を
+[GitHub Pages](https://pages.github.com/) 上で公開するためのプロジェクトです。
+
+本プロジェクトはあくまで**学習目的**であり、実際のサービス提供や顧客獲得を目的としたものではありません。
+
+---
 
 ## 特徴
 
-- NVIDIA CUDA 12.4 & cuDNN ベース
-- [uv](https://github.com/astral-sh/uv) パッケージマネージャ採用（Pythonパッケージ管理の高速化）
-- PyTorch, TensorFlow, CatBoost, XGBoostなどの主要ML/DLライブラリをGPU対応で事前設定
-- Jupyter Lab環境を含む開発環境
-- シンプルなディレクトリ構造で柔軟なカスタマイズが可能
+* **GitHub Pages** による無料の静的ホスティング
+* **シンプルなHTML/CSS** で構成されたランディングページ
+* ページ内フォーム（メールアドレス入力）を **JavaScript + Google Apps Script** で処理
+* フォーム送信後に **ダミー資料（PDF）** をダウンロード可能
+* **GA4 + GTM** を利用したイベント計測
+
+  * CTAクリック
+  * フォーム送信
+  * PDFダウンロード
+* 「作成 → 計測 → 改善」の学習サイクルを実践
+
+---
 
 ## 前提条件
 
-- [Docker](https://www.docker.com/) と [Docker Compose](https://docs.docker.com/compose/)
-- [NVIDIA Container Toolkit](https://github.com/NVIDIA/nvidia-docker)
+* GitHub アカウント
+* 基本的な Git 操作
+* Google アカウント（Apps Script & スプレッドシート利用）
+* GA4 & GTM アカウント（計測を行う場合）
+
+---
 
 ## セットアップ手順
 
 ### 1. リポジトリのクローン
 
 ```bash
-git clone https://github.com/yourusername/docker-uv-template.git
-cd docker-uv-template
+git clone https://github.com/yourusername/hairtalk-landing.git
+cd hairtalk-landing
 ```
 
-### 2. 環境変数の設定
+### 2. ローカルでの表示確認
 
-`.env.example`を`.env`にコピーして必要に応じて編集します：
+開発中にローカルでページを確認したい場合は、ブラウザで `index.html` を直接開くのではなく、  
+簡易Webサーバーを立てる必要があります（相対パスやフォーム送信処理が正常に動作しない場合があるため）。
 
-```bash
-cp .env.example .env
-# 必要に応じて.envを編集（プロキシ設定など）
-```
+#### 推奨方法: VSCode Live Server 拡張
 
-### 3. Dockerイメージのビルドと起動
+1. VSCode の拡張機能から **Live Server** をインストール  
+2. `index.html` を右クリックして「Open with Live Server」を選択  
+3. 自動的にブラウザが開き、`http://127.0.0.1:5500` などのURLで確認できます
 
-```bash
-# イメージをビルドしてコンテナを起動（バックグラウンド実行）
-docker compose up -d
+### 3. GitHub Pages 公開設定
 
-# コンテナ内のシェルにアクセス
-docker compose exec app bash
-```
+1. GitHubリポジトリ → **Settings → Pages**
+2. **Branch: main / root** を選択
+3. 数分後、`https://yourusername.github.io/hairtalk-landing/` で公開
 
-### 4. Jupyter Labの起動
+---
 
-コンテナ内で以下のコマンドを実行します：
+## フォーム処理の仕組み
 
-```bash
-jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root
-```
+* **index.html** に埋め込まれたフォームを **JavaScript (fetch)** で送信
+* 送信先は **Google Apps Script (Webアプリ)**
+* Apps Script が **スプレッドシートに保存** → JSONレスポンスで成功/失敗を返す
+* 成功時はサンクス画面を表示し、**PDFダウンロード**への導線を提示
 
-表示されるURLをブラウザで開くとJupyter Labにアクセスできます。
+---
+
+## Google Apps Script 設定手順
+
+1. Google スプレッドシートを作成（例：`hairtalk_leads`）
+2. 拡張機能 → Apps Script を開く
+3. `Code.gs` にフォーム受け口スクリプトを貼り付け
+4. **新しいデプロイ → 種類：ウェブアプリ → 全員アクセス可** で公開
+5. 発行されたURLを `assets/main.js` 内の `GAS_ENDPOINT` に設定
+
+---
 
 ## ディレクトリ構造
 
 ```
 .
-├── Dockerfile            # Docker設定ファイル
-├── README.md             # このファイル
-├── docker-compose.yml    # Docker Compose設定
-├── notebooks/            # Jupyter Notebookファイル用
-│   ├── README.md
-│   └── check_gpu.ipynb   # GPU動作確認用Notebook
-├── pyproject.toml        # Pythonプロジェクト設定
-├── src/                  # ソースコード
-│   ├── README.md
-│   └── check_gpu.py      # GPU動作確認用スクリプト
-├── inputs/               # 入力データ用
-│   └── README.md
-├── outputs/              # 出力データ用
-│   └── README.md
-├── uv.lock               # uv依存関係ロックファイル
-└── Makefile              # 便利なコマンド集
+├── index.html          # LP本体（ヒーロー/説明/CTA/フォーム/注意書き）
+├── assets/
+│   ├── styles.css      # スタイルシート
+│   └── main.js         # フォーム送信処理・GA4イベント送信
+├── downloads/
+│   └── sample.pdf      # ダミー資料（学習用と明記）
+├── README.md           # このファイル
+├── LICENSE             # 任意（MITなど）
+└── CNAME               # 任意（独自ドメイン利用時）
 ```
 
-## GPU確認方法
+---
 
-このテンプレートには、GPU環境が正しく構成されているかを確認するためのスクリプトが含まれています。
+## GA4 / GTM 計測イベント
 
-### 1. Pythonスクリプトによる確認
+* `cta_click` : CTAボタン押下
+* `form_submit` : フォーム送信成功
+* `file_download` : PDFリンククリック
 
-```bash
-# コンテナ内で実行
-python src/check_gpu.py
-```
+> GTMで「リンククリック」や「カスタムイベント」を設定し、GA4に送信します。
 
-このスクリプトは以下のライブラリのGPU対応状況を確認します：
-- PyTorch
-- TensorFlow
-- CatBoost
-- XGBoost
+---
 
-### 2. Jupyter Notebookによる確認
+## 学習フロー
 
-Jupyter Lab環境で`notebooks/check_gpu.ipynb`を開き、実行することでより詳細な情報を視覚的に確認できます。
+1. LP作成・公開
+2. GA4 + GTM で計測設定
+3. 知人アクセス等でテストデータ収集
+4. CVR（コンバージョン率）の初期測定
+5. CTA文言や配置を変更 → ABテスト実施
+6. 改善サイクルを繰り返し、効果を比較
 
-```bash
-# コンテナ内でJupyter Labを起動
-jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root
-```
+---
 
-## パッケージの追加方法
+## 注意事項
 
-コンテナ内で`uv`コマンドを使用してパッケージを追加します：
-
-```bash
-# パッケージ追加
-uv add package_name
-
-# 特定のバージョンを指定して追加
-uv add package_name==1.0.0
-
-# 開発依存関係として追加
-uv add --dev package_name
-
-# PyTorchのようにインデックスURLが必要な場合
-uv add torch --index-url https://download.pytorch.org/whl/cu124
-```
-
-依存関係をインストール（pyproject.tomlから）：
-```bash
-# 依存関係をインストール
-uv sync
-```
-
-## コンテナ内でのMakefileの使用方法
-
-このプロジェクトにはMakefileが含まれており、コンテナ内で以下のコマンドを使用できます：
-
-```bash
-# 利用可能なコマンド一覧を表示
-make help
-
-# lintの実行
-make lint
-
-# フォーマットの実行
-make format
-
-# 一時ファイル、キャッシュの削除
-make clean
-
-# GPU利用可能性の確認
-make gpu-check
-```
-
-### 使用上の注意点
-
-- VSCodeでコンテナを開いて作業する場合、ターミナルから上記のコマンドを実行できます
-- `make` コマンドは `/work` ディレクトリから実行してください
-
-## コード品質管理
-
-このテンプレートには[ruff](https://github.com/charliermarsh/ruff)が導入されており、lintとフォーマットに利用できます。
-
-`make` コマンドを使わずに直接 `ruff` コマンドを実行することも可能です：
-
-```bash
-# lintの実行
-ruff check .
-
-# フォーマットの実行
-ruff format .
-```
-
-## カスタマイズ
-
-このテンプレートは様々なプロジェクトタイプや好みに合わせてカスタマイズできます：
-
-- `pyproject.toml`: 依存パッケージの追加・削除
-- `Dockerfile`: 必要なシステムパッケージの追加
-- `docker-compose.yml`: ボリュームマウントやポート設定の調整
-
-## ライセンス
-
-[MIT](LICENSE)
+* 本LPは **学習目的** であり、商用利用は想定していません
+* フォームで取得したメールアドレスは学習目的に限定して扱います
+* ページ内およびPDFに「学習用である」ことを明記してください
+* 個人情報の保存期間・削除方法を README またはページ内に記載すると安心です

@@ -12,3 +12,7 @@ catboost_info/
 cert_TrustCA_pa.crt
 
 .env
+
+node_modules/
+package-lock.json
+package.json

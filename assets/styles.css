@@ -1,0 +1,393 @@
+/* ブランドカラーとスケール変数 */
+:root {
+  /* カラー */
+  --color-primary: #4A86E8;
+  --color-primary-dark: #3A76D8;
+  --color-surface: #FFFFFF;
+  --color-bg-deep-1: #0B1220;
+  --color-bg-deep-2: #1A2333;
+  --color-text: #333333;
+  --color-muted: #777777;
+
+  /* 余白スケール (8pxベース) */
+  --space-1: 8px;
+  --space-2: 12px;
+  --space-3: 16px;
+  --space-4: 20px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 40px;
+  --space-8: 60px;
+  --space-9: 80px;
+}
+
+/* リセットとベース設定 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* フォーカス可視化（アクセシビリティ改善） */
+a:focus-visible, .btn:focus-visible, input:focus-visible, button:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* フォーカス可視化（マウス/タッチ操作時は非表示） */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+body {
+  font-family: 'Helvetica Neue', 'Arial', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', sans-serif;
+  line-height: 1.6;
+  color: var(--color-text);
+}
+
+.container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+h1, h2, h3 {
+  line-height: 1.2;
+  margin-bottom: var(--space-4);
+}
+
+h1 {
+  font-size: 2.5rem;
+}
+
+h2 {
+  font-size: 2rem;
+  text-align: center;
+  margin-bottom: var(--space-7);
+}
+
+h3 {
+  font-size: 1.5rem;
+}
+
+p {
+  margin-bottom: var(--space-4);
+}
+
+a {
+  text-decoration: none;
+  color: var(--color-primary);
+}
+
+section {
+  padding: var(--space-9) 0;
+}
+
+.accent {
+  color: var(--color-primary);
+}
+
+.hidden {
+  display: none;
+}
+
+/* honeypotフィールド用のスタイル - botの検出に使用 */
+.hidden-field {
+  display: none;
+  visibility: hidden;
+  position: absolute;
+  left: -9999px;
+}
+
+/* ボタンスタイル */
+.btn {
+  display: inline-block;
+  padding: var(--space-2) var(--space-5);
+  border-radius: 30px;
+  font-weight: bold;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background-color: var(--color-primary);
+  color: var(--color-surface);
+  border: 2px solid var(--color-primary);
+}
+
+.btn-primary:hover {
+  background-color: var(--color-primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.btn-secondary {
+  background-color: transparent;
+  color: var(--color-primary);
+  border: 2px solid var(--color-primary);
+}
+
+.btn-secondary:hover {
+  background-color: #f0f5ff;
+  transform: translateY(-2px);
+}
+
+.btn-small {
+  padding: var(--space-1) var(--space-3);
+  font-size: 0.9rem;
+}
+
+/* ナビゲーション */
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-4) 0;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--color-surface);
+}
+
+.nav-links {
+  display: flex;
+  list-style: none;
+  align-items: center;
+}
+
+.nav-links li {
+  margin-left: var(--space-6);
+  display: flex;
+  align-items: center;
+}
+
+.nav-links a {
+  color: var(--color-surface);
+  font-weight: bold;
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+  padding: var(--space-1) 0;
+}
+
+.nav-links .btn-small {
+  padding: var(--space-1) var(--space-3);
+  line-height: 1;
+}
+
+/* ヒーローセクション */
+.hero {
+  /* 画像をやめて、濃淡のみの背景に */
+  background: linear-gradient(180deg, var(--color-bg-deep-1) 0%, var(--color-bg-deep-2) 100%);
+  min-height: 80vh;
+  color: var(--color-surface);
+  display: flex;
+  align-items: center;
+}
+
+.hero-content {
+  max-width: 800px;
+  margin-top: var(--space-8);
+}
+
+.hero-content h1 {
+  font-size: 3rem;
+  margin-bottom: var(--space-4);
+}
+
+.hero-content p {
+  font-size: 1.2rem;
+  margin-bottom: var(--space-7);
+}
+
+/* 特徴セクション */
+.features {
+  background-color: var(--color-surface);
+}
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--space-7);
+}
+
+.feature-card {
+  background: var(--color-surface);
+  padding: var(--space-6);
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-10px);
+}
+
+.feature-icon {
+  font-size: 3rem;
+  margin-bottom: var(--space-4);
+}
+
+/* サービス説明セクション */
+.about-content {
+  display: block;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.about-text p {
+  margin-bottom: var(--space-4);
+}
+
+.about-text .btn {
+  margin-top: var(--space-4);
+}
+
+/* フォームセクション */
+.contact {
+  background-color: var(--color-surface);
+}
+
+.section-description {
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto var(--space-7) auto;
+}
+
+.form-container {
+  max-width: 600px;
+  margin: 0 auto;
+  background: var(--color-surface);
+  padding: var(--space-7);
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+.form-group {
+  margin-bottom: var(--space-4);
+}
+
+label {
+  display: block;
+  margin-bottom: var(--space-1);
+  font-weight: bold;
+}
+
+input {
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+button[type="submit"] {
+  width: 100%;
+  cursor: pointer;
+  margin-top: var(--space-4);
+}
+
+.form-note {
+  margin-top: var(--space-4);
+  font-size: 0.8rem;
+  color: var(--color-muted);
+  text-align: center;
+}
+
+/* サンクス画面 */
+.thanks-container {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.thanks-message {
+  background: var(--color-surface);
+  padding: var(--space-7);
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+  text-align: center;
+}
+
+.thanks-icon {
+  font-size: 4rem;
+  color: var(--color-primary);
+  margin-bottom: var(--space-4);
+}
+
+.small-text {
+  font-size: 0.8rem;
+  color: var(--color-muted);
+}
+
+/* フッター */
+footer {
+  background-color: var(--color-bg-deep-1);
+  color: var(--color-surface);
+  padding: var(--space-7) 0;
+  text-align: center;
+}
+
+footer small {
+  opacity: 0.7;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 992px) {
+  h1 {
+    font-size: 2.2rem;
+  }
+
+  h2 {
+    font-size: 1.8rem;
+  }
+
+  h3 {
+    font-size: 1.3rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .nav-links {
+    display: none;
+  }
+
+  .hero-content h1 {
+    font-size: 2.2rem;
+  }
+
+  .hero-content p {
+    font-size: 1rem;
+  }
+
+  section {
+    padding: var(--space-8) 0;
+  }
+
+  .feature-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-5);
+  }
+
+  .form-container {
+    padding: var(--space-5);
+  }
+
+  .thanks-message {
+    padding: var(--space-5);
+  }
+}

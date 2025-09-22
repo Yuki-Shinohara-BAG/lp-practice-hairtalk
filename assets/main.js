@@ -1,5 +1,5 @@
 // グローバル変数
-const GAS_ENDPOINT = 'https://script.google.com/macros/s/AKfycbyrq3gTf5OHqSMHUuZBuaNrYi7gMtct0IM57LXhXSW26Rd61csknPePYoJxscfDdStpHA/exec'; // Google Apps Script Webアプリの公開URL
+const GAS_ENDPOINT = 'https://script.google.com/macros/s/AKfycbz3p9wwnl_fNbGCLCBth7kp-C3a5OO4WVk9AsaBzIN5Gx9QGCp9f-9tqZQ_wHEhsg5ESw/exec'; // Google Apps Script Webアプリの公開URL
 
 // DOM要素の取得
 document.addEventListener('DOMContentLoaded', function() {
@@ -50,7 +50,6 @@ document.addEventListener('DOMContentLoaded', function() {
             // Google Apps Scriptに送信
             fetch(GAS_ENDPOINT, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
                 // mode は既定 (cors) を使用
             })

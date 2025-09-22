@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Google Apps Scriptに送信
             fetch(GAS_ENDPOINT, {
                 method: 'POST',
-                body: JSON.stringify(data)
+                body: new URLSearchParams(data)
                 // mode は既定 (cors) を使用
             })
             .then(async (response) => {

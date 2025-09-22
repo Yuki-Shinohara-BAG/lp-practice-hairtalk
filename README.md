@@ -11,9 +11,10 @@
 ## 特徴
 
 * **GitHub Pages** による無料の静的ホスティング
-* **シンプルなHTML/CSS** で構成されたランディングページ
-* ページ内フォーム（メールアドレス入力）を **JavaScript + Google Apps Script** で処理
-* フォーム送信後に **ダミー資料（PDF）** をダウンロード可能
+* **シンプルなHTML/CSS** で構成されたランディングページ（CSS変数活用）
+* ページ内フォーム（メールアドレス入力のみ）を **JavaScript + Google Apps Script** で処理
+* フォーム送信後に **ダミー資料（PDF）** を即時ダウンロード可能
+* **セキュリティ対策**（CORS設定、honeypotフィールドによるスパムボット対策）
 * **GA4 + GTM** を利用したイベント計測
 
   * CTAクリック
@@ -62,10 +63,12 @@ cd hairtalk-landing
 
 ## フォーム処理の仕組み
 
-* **index.html** に埋め込まれたフォームを **JavaScript (fetch)** で送信
-* 送信先は **Google Apps Script (Webアプリ)**
-* Apps Script が **スプレッドシートに保存** → JSONレスポンスで成功/失敗を返す
-* 成功時はサンクス画面を表示し、**PDFダウンロード**への導線を提示
+* **index.html** に埋め込まれたフォームを **JavaScript (fetch API)** で送信
+* シンプルな構成（メールアドレスのみ入力、honeypotフィールドを含む）
+* 送信先は **Google Apps Script (Webアプリ)** - CORS対応済み
+* フォームデータは JSON 形式で送信、CORS プレフライトリクエストにも対応
+* Apps Script が **バリデーション後にスプレッドシートに保存** → JSONレスポンスで成功/失敗を返す
+* 成功時はサンクス画面を表示し、**PDFを即時ダウンロード**できる導線を提示
 
 ---
 
@@ -73,9 +76,81 @@ cd hairtalk-landing
 
 1. Google スプレッドシートを作成（例：`hairtalk_leads`）
 2. 拡張機能 → Apps Script を開く
-3. `Code.gs` にフォーム受け口スクリプトを貼り付け
+3. `Code.gs` に以下のようなフォーム受け口スクリプトを貼り付け
 4. **新しいデプロイ → 種類：ウェブアプリ → 全員アクセス可** で公開
 5. 発行されたURLを `assets/main.js` 内の `GAS_ENDPOINT` に設定
+
+```javascript
+// ==== Code.gs サンプルコード ====
+// 設定（必要に応じて変更）
+const SHEET_NAME = "Sheet1";        // 保存先シート名
+const ALLOW_ORIGIN = "https://yourusername.github.io"; // 本番は自サイトに限定（学習用は "*" でも可）
+
+// 共通: CORSヘッダー
+function corsHeaders() {
+  return {
+    "Access-Control-Allow-Origin": ALLOW_ORIGIN,
+    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+  };
+}
+
+// プレフライト（OPTIONS）
+function doOptions() {
+  return ContentService.createTextOutput("")
+    .setMimeType(ContentService.MimeType.TEXT)
+    .setHeaders(corsHeaders());
+}
+
+// 本処理（POST）
+function doPost(e) {
+  try {
+    const headers = corsHeaders();
+
+    // 入力チェック
+    if (!e || !e.postData || !e.postData.contents) {
+      return ContentService.createTextOutput(JSON.stringify({ status: "ng", reason: "no_body" }))
+        .setMimeType(ContentService.MimeType.JSON)
+        .setHeaders(headers);
+    }
+
+    // 送信データのパース
+    const body = JSON.parse(e.postData.contents || "{}");
+    const rawEmail = (body.email || "").trim();
+    const honeypot = (body.company || "").trim(); // ハニーポットフィールド
+
+    // ボット対策: honeypotフィールドに値があればボットと判断
+    if (honeypot) {
+      return ContentService.createTextOutput(JSON.stringify({ status: "ng", reason: "bot" }))
+        .setMimeType(ContentService.MimeType.JSON)
+        .setHeaders(headers);
+    }
+
+    // メールアドレスの簡易チェック
+    const emailOk = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(rawEmail);
+    if (!emailOk) {
+      return ContentService.createTextOutput(JSON.stringify({ status: "ng", reason: "invalid_email" }))
+        .setMimeType(ContentService.MimeType.JSON)
+        .setHeaders(headers);
+    }
+
+    // スプレッドシートに保存
+    const sheet = SpreadsheetApp.getActive().getSheetByName(SHEET_NAME) || SpreadsheetApp.getActiveSheet();
+    sheet.appendRow([new Date(), rawEmail]);
+
+    // 成功レスポンス
+    return ContentService.createTextOutput(JSON.stringify({ status: "ok" }))
+      .setMimeType(ContentService.MimeType.JSON)
+      .setHeaders(headers);
+
+  } catch (err) {
+    // エラーレスポンス
+    return ContentService.createTextOutput(JSON.stringify({ status: "ng", reason: "server_error" }))
+      .setMimeType(ContentService.MimeType.JSON)
+      .setHeaders(corsHeaders());
+  }
+}
+```
 
 ---
 
@@ -85,14 +160,32 @@ cd hairtalk-landing
 .
 ├── index.html          # LP本体（ヒーロー/説明/CTA/フォーム/注意書き）
 ├── assets/
-│   ├── styles.css      # スタイルシート
-│   └── main.js         # フォーム送信処理・GA4イベント送信
+│   ├── styles.css      # スタイルシート（CSS変数使用）
+│   └── main.js         # フォーム送信処理・GA4イベント送信・honeypotチェック
 ├── downloads/
 │   └── sample.pdf      # ダミー資料（学習用と明記）
+├── Code.gs             # Google Apps Script用コードサンプル
 ├── README.md           # このファイル
 ├── LICENSE             # 任意（MITなど）
 └── CNAME               # 任意（独自ドメイン利用時）
 ```
+
+## CSS設計
+
+CSSは以下の特徴を持っています：
+
+* CSS変数を使用した一元管理
+  * カラーパレット（`--color-primary`, `--color-text`など）
+  * 余白スケール（`--space-1`～`--space-9`）
+* レスポンシブデザイン
+  * モバイル対応（768px以下）
+  * タブレット対応（992px以下）
+* アクセシビリティ
+  * フォーカス可視化でキーボード操作をサポート
+  * 適切なコントラスト比を確保
+* シンプルなグリッドレイアウト
+  * 特徴カードはCSS Grid
+  * フォームとサンクス画面は中央寄せ
 
 ---
 
